@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from 'react';
-import axios from 'axios';
 import WelcomeLogo from '@/components/WelcomeLogo';
 
 function Login() {
@@ -11,23 +10,21 @@ function Login() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
-
-        try {
-            const response = await axios.post('http://localhost:3000/auth', {
-                userTag,
-                password
-            });
-
-            if (response.data.token) {
-                // Store the token in localStorage or a more secure place
-                localStorage.setItem('token', response.data.token);
-            }
-        } catch (err) {
-            setError('Invalid username or password');
-            console.error('Login error', err);
+        const response = await fetch('/api/signin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userTag, password }),
+        });
+    
+        if (response.ok) {
+          // Handle success
+        } else {
+          const data = await response.json();
+          setError(data.error);
         }
-    };
+      };
 
     return (
         <div className="bg-black min-h-screen text-white flex justify-center items-center">
@@ -39,7 +36,7 @@ function Login() {
                 <form onSubmit={handleLogin} className="flex flex-col gap-4">
                     <input 
                         type="text" 
-                        placeholder="username" 
+                        placeholder="user tag" 
                         className="rounded-full bg-gray-900 p-4 py-2 focus:outline-none" 
                         value={userTag}
                         onChange={(e) => setUserTag(e.target.value)}
