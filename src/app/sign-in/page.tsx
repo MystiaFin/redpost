@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import WelcomeLogo from '@/components/WelcomeLogo';
 
 function Login() {
@@ -10,25 +10,31 @@ function Login() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await fetch('/api/signin', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userTag, password }),
-        });
-    
-        if (response.ok) {
-          // Handle success
-        } else {
-          const data = await response.json();
-          setError(data.error);
+        try {
+            const response = await fetch('/api/signin', {  // Fixed endpoint here
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userTag, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                window.location.href = '/';
+            } else {
+                setError(data.error);
+            }
+        } catch (error) {
+            setError('An error occurred. Please try again.');
         }
-      };
+    };
 
     return (
         <div className="bg-black min-h-screen text-white flex justify-center items-center">
-            <WelcomeLogo/>
+            <WelcomeLogo />
             <div className="w-96 flex flex-col pl-10 gap-4 border-l-2">
                 <h1 className="text-3xl font-bold mb-4 text-center">
                     Welcome back!

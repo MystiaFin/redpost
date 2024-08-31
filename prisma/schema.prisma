@@ -14,8 +14,9 @@ generator client {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  userTag  String @unique
-  password String
+  id             Int     @id @default(autoincrement())
+  name           String
+  userTag        String  @unique
+  password       String
+  profilePicture String? @default("")
 }

@@ -7,6 +7,7 @@ import RightNavBar from '../components/RightNavBar'
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +21,25 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUser(token);
+    }
+  }, []);
+  const fetchUser = async (token: string) => {
+    const response = await fetch('/api/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setUser(data.user);
+    }
+  };
 
   return (
     <div className='bg-black min-h-screen text-white'>
